@@ -86,19 +86,26 @@ async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'update {update} caused error {context.error}')
     
 
-if __name__ == '__main__':
-    print('Starting jarvis .....')
-    
+if __name__ == "__main__":
+    print("Starting jarvis .....")
+
     app = Application.builder().token(TOKEN).build()
-    
+
     app.add_handler(CommandHandler('start', start_command))
     app.add_handler(CommandHandler('help', help_command))
     app.add_handler(CommandHandler('custom', custom_command))
     app.add_handler(CommandHandler('joke', jokes_command))
     app.add_handler(MessageHandler(filters.TEXT, handle_message))
-    
-    app.add_error_handler(error)
-    
-    print('Polling .....')
-    app.run_polling(poll_interval=2)
+
+    import asyncio
+
+    async def main():
+        print("Polling .....")
+        await app.initialize()
+        await app.start()
+        await app.updater.start_polling(poll_interval=2)
+        await app.updater.idle()
+
+    asyncio.run(main())
+
     
